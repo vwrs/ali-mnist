@@ -5,12 +5,14 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('-g', '--gpu', type=str, default='-1', metavar='GPU',
                     help='set GPU id (default: -1)')
-parser.add_argument('-b', '--batch-size', type=int, default=100, metavar='N',
-                    help='input batch size for training (default: 100)')
+parser.add_argument('-b', '--batch-size', type=int, default=32, metavar='N',
+                    help='input batch size for training (default: 32)')
 parser.add_argument('-e', '--epochs', type=int, default=100, metavar='E',
                     help='how many epochs to train (default: 100)')
-parser.add_argument('--lr', type=float, default=1e-4, metavar='LR',
-                    help='learning rate (default: 1e-4)')
+parser.add_argument('--lr-g', type=float, default=2e-4, metavar='LR',
+                    help='initial ADAM learning rate of G (default: 2e-4)')
+parser.add_argument('--lr-d', type=float, default=1e-5, metavar='LR',
+                    help='initial ADAM learning rate of D (default: 1e-5)')
 parser.add_argument('--decay', type=float, default=1e-5, metavar='D',
                     help='weight decay or L2 penalty (default: 1e-5)')
 parser.add_argument('-z', '--zdim', type=int, default=128, metavar='Z',
@@ -39,7 +41,6 @@ from torchvision.utils import save_image
 from model import *
 from utils import *
 
-os.chdir('..')
 if not os.path.exists(IMAGE_PATH):
     print('mkdir ', IMAGE_PATH)
     os.mkdir(IMAGE_PATH)
@@ -82,14 +83,13 @@ def train():
 
     # optimizer
     optim_g = optim.Adam(chain(Gx.parameters(),Gz.parameters()),
-                         lr=opt.lr, betas=(.5, .999), weight_decay=opt.decay)
+                         lr=opt.lr_g, betas=(.5, .999), weight_decay=opt.decay)
     optim_d = optim.Adam(chain(Dx.parameters(),Dxz.parameters()),
-                         lr=opt.lr, betas=(.5, .999), weight_decay=opt.decay)
+                         lr=opt.lr_d, betas=(.5, .999), weight_decay=opt.decay)
 
     # train
     # ==========================
     softplus = nn.Softplus()
-    d_interval = 3
     for epoch in range(opt.epochs):
         for i, (imgs, _) in enumerate(dataloader):
             batch_size = imgs.size(0)
@@ -114,33 +114,16 @@ def train():
             # compute loss
             loss_d = torch.mean(softplus(-d_true) + softplus(d_fake))
             loss_g = torch.mean(softplus(d_true) + softplus(-d_fake))
-            if i % d_interval == 0:  # update D
-                # for p in Dx.parameters():
-                #     p.requires_grad = True
-                # for p in Dxz.parameters():
-                #     p.requires_grad = True
-                # for p in Gx.parameters():
-                #     p.requires_grad = False
-                # for p in Gz.parameters():
-                #     p.requires_grad = False
-                # backward & update params
-                Dx.zero_grad()
-                Dxz.zero_grad()
-                loss_d.backward()
-                optim_d.step()
-            else:  # update G
-                # for p in Dx.parameters():
-                #     p.requires_grad = False
-                # for p in Dxz.parameters():
-                #     p.requires_grad = False
-                # for p in Gx.parameters():
-                #     p.requires_grad = True
-                # for p in Gz.parameters():
-                #     p.requires_grad = True
-                Gx.zero_grad()
-                Gz.zero_grad()
-                loss_g.backward()
-                optim_g.step()
+
+            # backward & update params
+            Dx.zero_grad()
+            Dxz.zero_grad()
+            loss_d.backward(retain_graph=True)
+            optim_d.step()
+            Gx.zero_grad()
+            Gz.zero_grad()
+            loss_g.backward()
+            optim_g.step()
 
             prog_ali(epoch+1, i+1, N, loss_g.data[0], loss_d.data[0], d_true.data.mean(), d_fake.data.mean())
 
