@@ -13,8 +13,8 @@ parser.add_argument('--lr-g', type=float, default=2e-4, metavar='LR',
                     help='initial ADAM learning rate of G (default: 2e-4)')
 parser.add_argument('--lr-d', type=float, default=1e-5, metavar='LR',
                     help='initial ADAM learning rate of D (default: 1e-5)')
-parser.add_argument('--decay', type=float, default=1e-5, metavar='D',
-                    help='weight decay or L2 penalty (default: 1e-5)')
+parser.add_argument('--decay', type=float, default=0, metavar='D',
+                    help='weight decay or L2 penalty (default: 0)')
 parser.add_argument('-z', '--zdim', type=int, default=128, metavar='Z',
                     help='dimension of latent vector (default: 128)')
 
