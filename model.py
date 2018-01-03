@@ -56,22 +56,15 @@ class DiscriminatorX(nn.Module):
         super().__init__()
         self.net = nn.Sequential(
             nn.Conv2d(1, zd//4, 5, 1),
-            # nn.Dropout2d(0.2),
             nn.LeakyReLU(0.02),
 
             nn.Conv2d(zd//4, zd//2, 5, 2),
-            # nn.Dropout2d(0.2),
-            nn.BatchNorm2d(zd//2),
             nn.LeakyReLU(0.02),
 
             nn.Conv2d(zd//2, zd, 3, 2),
-            # nn.Dropout2d(0.2),
-            nn.BatchNorm2d(zd),
             nn.LeakyReLU(0.02),
 
             nn.Conv2d(zd, zd, 4, 1),
-            # nn.Dropout2d(0.2),
-            nn.BatchNorm2d(zd),
             nn.LeakyReLU(0.02)
         )
 
@@ -83,11 +76,9 @@ class DiscriminatorXZ(nn.Module):
         super().__init__()
         self.net = nn.Sequential(
             nn.Conv2d(zd*2, zd*2, 1, 1),
-            # nn.Dropout2d(0.2),
             nn.LeakyReLU(0.02),
 
             nn.Conv2d(zd*2, zd, 1, 1),
-            # nn.Dropout2d(0.2),
             nn.LeakyReLU(0.02),
 
             nn.Conv2d(zd, 1, 1, 1),
