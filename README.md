@@ -15,3 +15,7 @@ optional arguments:
   --decay D             weight decay or L2 penalty (default: 1e-5)
   -z Z, --zdim Z        dimension of latent vector (default: 128)
 ```
+
+### result (<= 200 epochs)
+![ali-1to200.gif](https://github.com/vwrs/ali-mnist/blob/imgs/ali-1to200.gif)
+
