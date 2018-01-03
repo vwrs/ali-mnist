@@ -2,11 +2,9 @@ ALI-MNIST
 ===
 PyTorch implementation of [Adversarially Learned Inference](https://arxiv.org/abs/1606.00704)
 
-TODO: it's still not working...
-
 ### Usage
 ```
-usage: train.py [-h] [-g GPU] [-b N] [-e E] [--lr LR] [--decay D] [-z Z]
+$ ./train.py [-h] [-g GPU] [-b N] [-e E] [--lr LR] [--decay D] [-z Z]
 
 optional arguments:
   -h, --help            show this help message and exit
