@@ -1,6 +1,6 @@
 ALI-MNIST
 ===
-PyTorch implementation of [Adversarially Learned Inference](https://arxiv.org/abs/1606.00704)
+Simple PyTorch implementation of [Adversarially Learned Inference](https://arxiv.org/abs/1606.00704)
 
 ### Usage
 ```

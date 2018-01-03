@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
-import os
+# set params
+# ===============
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('-g', '--gpu', type=str, default='-1', metavar='GPU',
@@ -20,10 +21,10 @@ parser.add_argument('-z', '--zdim', type=int, default=128, metavar='Z',
 
 opt = parser.parse_args()
 
-# set params
-# ===============
+import os
 cuda = 0 if opt.gpu == -1 else 1
-os.environ["CUDA_VISIBLE_DEVICES"] = opt.gpu
+if cuda:
+    os.environ["CUDA_VISIBLE_DEVICES"] = opt.gpu
 BS = opt.batch_size
 Zdim = opt.zdim
 IMAGE_PATH = 'images'
